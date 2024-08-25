@@ -10,42 +10,46 @@ const { title } = Astro.props;
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="description" content="Chat App" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body>
-		<slot />
+	<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+		<div class="min-h-screen flex flex-col">
+			<main class="flex-grow">
+				<slot />
+			</main>
+		</div>
 	</body>
 </html>
 <style is:global>
 	:root {
-		--accent: 136, 58, 234;
-		--accent-light: 224, 204, 250;
-		--accent-dark: 49, 10, 101;
-		--accent-gradient: linear-gradient(
-			45deg,
-			rgb(var(--accent)),
-			rgb(var(--accent-light)) 30%,
-			white 60%
-		);
+		--primary: 59, 130, 246;
+		--secondary: 107, 114, 128;
+		--accent: 249, 115, 22;
+		--background: 255, 255, 255;
+		--text: 17, 24, 39;
+	}
+	.dark {
+		--primary: 96, 165, 250;
+		--secondary: 156, 163, 175;
+		--accent: 251, 146, 60;
+		--background: 17, 24, 39;
+		--text: 249, 250, 251;
 	}
 	html {
-		font-family: system-ui, sans-serif;
-		background: #13151a;
-		background-size: 224px;
+		font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 	}
-	code {
-		font-family:
-			Menlo,
-			Monaco,
-			Lucida Console,
-			Liberation Mono,
-			DejaVu Sans Mono,
-			Bitstream Vera Sans Mono,
-			Courier New,
-			monospace;
+	body {
+		background-color: rgb(var(--background));
+		color: rgb(var(--text));
+	}
+	@media (prefers-color-scheme: dark) {
+		body {
+			background-color: rgb(var(--background));
+			color: rgb(var(--text));
+		}
 	}
 </style>
