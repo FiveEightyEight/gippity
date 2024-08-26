@@ -27,8 +27,7 @@
                     />
                     <button
                         type="button"
-                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                        onclick="togglePasswordVisibility('password')"
+                        class="password-toggle absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -63,8 +62,7 @@
                     />
                     <button
                         type="button"
-                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                        onclick="togglePasswordVisibility('confirmPassword')"
+                        class="password-toggle absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -99,14 +97,23 @@
 </div>
 
 <script>
-    function togglePasswordVisibility(inputId: string) {
-        const input = document.getElementById(inputId) as HTMLInputElement;
-        if (input) {
-            input.type = input.type === "password" ? "text" : "password";
-        }
-    }
 
     document.addEventListener('DOMContentLoaded', () => {
+        const passwordToggles = document.querySelectorAll('.password-toggle');
+        passwordToggles.forEach(button => {
+            button.addEventListener('click', () => {
+                passwordToggles.forEach(toggle => {
+                    const input = toggle.previousElementSibling as HTMLInputElement;
+                    if (input && input.type === 'password') {
+                        input.type = 'text';
+                        toggle.setAttribute('aria-label', 'Hide password');
+                    } else if (input) {
+                        input.type = 'password';
+                        toggle.setAttribute('aria-label', 'Show password');
+                    }
+                });
+            });
+        });
         const form = document.getElementById("registerForm");
         if (form) {
             form.addEventListener("submit", function (e) {
