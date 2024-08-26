@@ -110,14 +110,14 @@ import Layout from "../layouts/Layout.astro";
     </div>
 </Layout>
 
-<script is:inline>
+<script>
     document.addEventListener("DOMContentLoaded", () => {
         const passwordToggles = document.querySelectorAll(".password-toggle");
         passwordToggles.forEach((button) => {
             button.addEventListener("click", () => {
                 passwordToggles.forEach((toggle) => {
                     const input =
-                        toggle.previousElementSibling;
+                        toggle.previousElementSibling as HTMLInputElement;
                     if (input && input.type === "password") {
                         input.type = "text";
                         toggle.setAttribute("aria-label", "Hide password");
@@ -133,15 +133,15 @@ import Layout from "../layouts/Layout.astro";
             form.addEventListener("submit", function (e) {
                 e.preventDefault();
                 const email = (
-                    document.getElementById("email")
+                    document.getElementById("email") as HTMLInputElement
                 )?.value;
                 const password = (
-                    document.getElementById("password")
+                    document.getElementById("password") as HTMLInputElement
                 )?.value;
                 const confirmPassword = (
                     document.getElementById(
                         "confirmPassword",
-                    )
+                    ) as HTMLInputElement
                 )?.value;
 
                 if (password !== confirmPassword) {
