@@ -44,12 +44,16 @@
     </section>
 </div>
 
-<script>
+<script is:inline>
     let chat = {};
-    let messages: Array<{role: string, content: string}> = [];
-    let models: string[] = [];
+    /** @type {Array<{role: string, content: string}>} */
+    let messages = [];
+    /** @type {string[]} */
+    let models = [];
+    /** @type {string} */
     let currModel = "";
-    let modelSelection: HTMLSelectElement | null = null;
+    /** @type {HTMLSelectElement | null} */
+    let modelSelection = null;
     const USER = "user";
     const SYSTEM = "system";
     const ASSISTANT = "assistant";
@@ -58,14 +62,17 @@
     function checkAuth() {
         const token = localStorage.getItem("token");
         if (!token) {
-            window.location.href = "/login"; // Adjust this to your login page URL
+            // window.location.href = "/register";
+            window.history.pushState({}, "", "/register");
         }
+        return !!token;
     }
 
     window.addEventListener("DOMContentLoaded", () => {
-        checkAuth(); // Check authentication when the page loads
+        const hasToken = checkAuth();
+        if (!hasToken) return;
 
-        modelSelection = document.getElementById("model-selection") as HTMLSelectElement;
+        modelSelection = document.getElementById("model-selection");
         const token = localStorage.getItem("token");
         fetch("http://localhost:8080/models", {
             headers: {
@@ -86,7 +93,7 @@
                 console.log("please select a model");
                 return;
             }
-            const chatInput = document.getElementById("chat-input") as HTMLInputElement;
+            const chatInput = document.getElementById("chat-input");
             const content = chatInput?.value || "";
             messages.push({
                 role: USER,
@@ -97,7 +104,9 @@
         });
     });
 
-    function setModels(apiRes: {models: string[]}) {
+    /** @param {Object} apiRes
+     *  @param {string[]} apiRes.models */
+    function setModels(apiRes) {
         if (!apiRes) {
             console.log("setModels called with empty object");
         }
