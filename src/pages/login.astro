@@ -1,7 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import LoginContainer from "../components/LoginContainer";
 ---
-
+<Layout title="Gippity">
+    <LoginContainer client:visible />
+</Layout>
+<!-- 
 <Layout title="Gippity">
     <div
         class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
@@ -86,20 +90,24 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <script>
+    import { setAccessToken } from "../stores/token";
+    const apiUrl = import.meta.env.PUBLIC_API_URL;
     document.addEventListener("DOMContentLoaded", async () => {
-        const { setAccessToken } = await import('../stores/token');
-        const apiUrl = import.meta.env.PUBLIC_API_URL;
         document
             .getElementById("loginForm")
             ?.addEventListener("submit", function (e) {
                 e.preventDefault();
 
-                const username = (document.getElementById("username") as HTMLInputElement)?.value;
-                const password = (document.getElementById("password") as HTMLInputElement)?.value;
+                const username = (
+                    document.getElementById("username") as HTMLInputElement
+                )?.value;
+                const password = (
+                    document.getElementById("password") as HTMLInputElement
+                )?.value;
 
                 fetch(`${apiUrl}/login`, {
                     method: "POST",
-                    credentials: 'include',
+                    credentials: "include",
                     headers: {
                         Authorization:
                             "Basic " + btoa(username + ":" + password),
@@ -144,4 +152,4 @@ import Layout from "../layouts/Layout.astro";
                 }
             });
     });
-</script>
+</script> -->
