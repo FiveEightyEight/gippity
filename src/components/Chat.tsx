@@ -94,55 +94,47 @@ const Chat: React.FC = () => {
             // sendMessage(newMessage);
         }
     };
-    
+
 
     return (
-        <div className="h-full grid grid-rows-12">
-            <div
-                className="row-span-1 flex justify-center items-center w-full p-2 border-b-2 border-solid border-black bg-slate-700 shadow-lg"
-            >
-                <h1 className="text-2xl font-bold text-cyan-200">Gippity</h1>
-            </div>
 
-            <div className="row-span-11 flex flex-col justify-between w-full">
-                <article className="flex-grow overflow-y-auto px-4 py-2">
-                    {currentChatId ? (
-                        messages.map((msg, index) => (
-                            <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} mb-2`}>
-                                <p className={`${msg.role === 'user'
-                                    ? 'bg-slate-200 border-1 border-solid border-slate-300'
-                                    : 'bg-green-200 border-1 border-solid border-green-300'
-                                    } rounded-full py-2 px-4 max-w-[70%]`}
-                                >
-                                    {msg.content}
-                                </p>
-                            </div>
-                        ))
-                    ) : (
-                        <p>Select or start a new chat to begin.</p>
-                    )}
-                </article>
-                <div className="p-4 border-t border-gray-200">
-                    <form onSubmit={handleSubmit} className="flex items-center">
-                        <input
-                            type="text"
-                            ref={inputRef}
-                            placeholder="Type your message..."
-                            className="flex-grow p-2 border rounded-l-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <button
-                            type="submit"
-                            className="bg-blue-500 text-white p-2 rounded-r-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                            </svg>
-                        </button>
-                    </form>
-                </div>
+        <div className="row-span-11 flex flex-col justify-between w-full">
+            <article className="flex-grow overflow-y-auto px-4 py-2">
+                {currentChatId ? (
+                    messages.map((msg, index) => (
+                        <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} mb-2`}>
+                            <p className={`${msg.role === 'user'
+                                ? 'bg-slate-200 border-1 border-solid border-slate-300'
+                                : 'bg-green-200 border-1 border-solid border-green-300'
+                                } rounded-full py-2 px-4 max-w-[70%]`}
+                            >
+                                {msg.content}
+                            </p>
+                        </div>
+                    ))
+                ) : (
+                    <p>Select or start a new chat to begin.</p>
+                )}
+            </article>
+            <div className="p-4 border-t border-gray-200">
+                <form onSubmit={handleSubmit} className="flex items-center">
+                    <input
+                        type="text"
+                        ref={inputRef}
+                        placeholder="Type your message..."
+                        className="flex-grow p-2 border rounded-l-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                        type="submit"
+                        className="bg-blue-500 text-white p-2 rounded-r-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                    </button>
+                </form>
             </div>
         </div>
-
     );
 };
 

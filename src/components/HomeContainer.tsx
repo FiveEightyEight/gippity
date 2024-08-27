@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
-import Chat from "./Chat";
-import ChatHistory from "./ChatHistory";
 import { $accessToken, setAccessToken } from "../stores/token";
 import { apiFetch } from "../utils/api";
 const apiUrl = import.meta.env.PUBLIC_API_URL;
 const apiVersion = import.meta.env.PUBLIC_API_VERSION;
 
+import Chat from "./Chat";
+import ChatHistory from "./ChatHistory";
+import ModelSelector from "./ModelSelector";
+import type { Model } from './types';
+
 const Home: React.FC = () => {
     const [chat, setChat] = useState({});
     const [messages, setMessages] = useState<Array<{ role: string, content: string }>>([]);
-    const [models, setModels] = useState<string[]>([]);
+    const [models, setModels] = useState<Model[]>([]);
     const [currModel, setCurrModel] = useState("");
     const [loading, setLoading] = useState(false);
     const token = useStore($accessToken);
-    
+
 
     const USER = "user";
     const SYSTEM = "system";
@@ -94,7 +97,19 @@ const Home: React.FC = () => {
                 <ChatHistory />
             </div>
             <div className="col-span-9 h-full">
-                <Chat />
+                <div className="h-full grid grid-rows-12">
+                    <div
+                        className="row-span-1 grid grid-rows-2  w-full p-2 border-b-2 border-solid border-black bg-slate-700 shadow-lg"
+                    >
+                        <div className="flex justify-center">
+                            <h1 className="text-2xl font-bold text-cyan-200">Gippity</h1>
+                        </div>
+                        <div className="flex justify-center">
+                            <ModelSelector models={models} />
+                        </div>
+                    </div>
+                    <Chat />
+                </div>
             </div>
         </main>
     );
