@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { chatId } from '../stores/chat';
+const apiUrl = import.meta.env.PUBLIC_API_URL;
 
 interface Message {
     chat_id: string;
@@ -60,7 +61,7 @@ const Chat: React.FC = () => {
 
     const fetchConversation = async (id: string) => {
         try {
-            const response = await fetch(`http://localhost:8080/conversation/${id}`, {
+            const response = await fetch(`${apiUrl}/conversation/${id}`, {
                 credentials: 'include',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,

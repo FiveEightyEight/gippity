@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import { chatId } from '../stores/chat';
+const apiUrl = import.meta.env.PUBLIC_API_URL;
 
 interface Chat {
     id: string;
@@ -46,7 +47,7 @@ const ChatHistory: React.FC = () => {
 
     const fetchChatHistory = async () => {
         try {
-            const response = await fetch('http://localhost:8080/chat-history', {
+            const response = await fetch(`${apiUrl}/chat-history`, {
                 credentials: 'include',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,

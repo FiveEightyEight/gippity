@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Chat from "../components/Chat.tsx";
 import ChatHistory from "../components/ChatHistory.tsx";
+const apiUrl = import.meta.env.PUBLIC_API_URL;
 ---
 
 <Layout title="Gippity">
@@ -40,22 +41,23 @@ import ChatHistory from "../components/ChatHistory.tsx";
     let loading = false;
 
     function checkAuth() {
-        const token = localStorage.getItem("token");
+        const token = getAccessToken();
         if (!token) {
             window.location.href = "/register";
         }
         return !!token;
     }
 
-    window.addEventListener("DOMContentLoaded", () => {
+    window.addEventListener("DOMContentLoaded", async () => {
+        const { getAccessToken } = await import('../stores/token');
         const hasToken = checkAuth();
         if (!hasToken) return;
 
         modelSelection = document.getElementById("model-selection");
-        const token = localStorage.getItem("token");
-        fetch("http://localhost:8080/models", {
+        const token = getAccessToken();
+        fetch(`${apiUrl}/models`, {
             headers: {
-                Authorization: `Basic ${token}`,
+                Authorization: `Bearer ${token}`,
             },
         })
             .then((res) => res.json())
@@ -119,7 +121,7 @@ import ChatHistory from "../components/ChatHistory.tsx";
             messages: messages,
         };
         loading = true;
-        fetch("http://localhost:8080/chat", {
+        fetch(`${apiUrl}/chat`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

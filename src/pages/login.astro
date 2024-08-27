@@ -88,6 +88,7 @@ import Layout from "../layouts/Layout.astro";
 <script>
     document.addEventListener("DOMContentLoaded", async () => {
         const { setAccessToken } = await import('../stores/token');
+        const apiUrl = import.meta.env.PUBLIC_API_URL;
         document
             .getElementById("loginForm")
             ?.addEventListener("submit", function (e) {
@@ -96,7 +97,7 @@ import Layout from "../layouts/Layout.astro";
                 const username = (document.getElementById("username") as HTMLInputElement)?.value;
                 const password = (document.getElementById("password") as HTMLInputElement)?.value;
 
-                fetch("http://localhost:8080/login", {
+                fetch(`${apiUrl}/login`, {
                     method: "POST",
                     credentials: 'include',
                     headers: {

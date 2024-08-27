@@ -112,6 +112,7 @@ import Layout from "../layouts/Layout.astro";
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        const apiUrl = import.meta.env.PUBLIC_API_URL;
         const passwordToggles = document.querySelectorAll(".password-toggle");
         passwordToggles.forEach((button) => {
             button.addEventListener("click", () => {
@@ -149,7 +150,7 @@ import Layout from "../layouts/Layout.astro";
                     return;
                 }
 
-                fetch("http://localhost:8080/create_account", {
+                fetch(`${apiUrl}/create_account`, {
                     method: "POST",
                     headers: {
                         Authorization:
