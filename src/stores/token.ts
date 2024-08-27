@@ -1,18 +1,18 @@
 import { atom } from 'nanostores';
 const apiUrl = import.meta.env.PUBLIC_API_URL;
 
-export const accessToken = atom<string | null>(null);
+export const $accessToken = atom<string | null>(null);
 
 export function setAccessToken(token: string) {
-    accessToken.set(token);
+    $accessToken.set(token);
 }
 
 export function clearAccessToken() {
-    accessToken.set(null);
+    $accessToken.set(null);
 }
 
 export function getAccessToken(): string | null {
-    return accessToken.get();
+    return $accessToken.get();
 }
 
 export async function refreshToken(): Promise<boolean> {
@@ -27,8 +27,9 @@ export async function refreshToken(): Promise<boolean> {
 
         if (response.ok) {
             const data = await response.json();
-            if (data.accessToken) {
-                setAccessToken(data.accessToken);
+            // token expected as data.t
+            if (data.t) {
+                setAccessToken(data.t);
                 return true;
             }
         }
