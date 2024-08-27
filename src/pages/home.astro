@@ -1,48 +1,28 @@
 ---
+import Layout from "../layouts/Layout.astro";
+import Chat from "../components/Chat.tsx";
+import ChatHistory from "../components/ChatHistory.tsx";
 ---
 
-<div class="h-[100dvh] w-[100dvw]">
-    <section class="flex flex-col justify-between gap-1 h-[100dvh] p-2">
-        <div class="flex justify-center">
-            <select
-                id="model-selection"
-                class="border-solid border-2 border-slate-100"
-            >
-                <option></option>
-            </select>
+<Layout title="Gippity">
+    <main class="grid grid-cols-12 h-[100dvh] overflow-hidden">
+        <div class="col-span-3">
+            <ChatHistory client:idle />
         </div>
-        <div class="flex justify-center">
-            <article class="flex flex-col gap-2 w-1/2">
-                <div class="flex justify-end">
-                    <p
-                        class="bg-slate-200 border-1 border-solid border-slate-300 rounded-full py-2 px-4"
-                    >
-                        Hey
-                    </p>
-                </div>
-                <div class="flex justify-start">
-                    <p
-                        class="bg-green-200 border-1 border-solid border-green-300 rounded-full py-2 px-4"
-                    >
-                        Hello this is chatGPT
-                    </p>
-                </div>
-            </article>
+        <div class="col-span-9 h-full">
+            <Chat client:idle />
         </div>
-        <div class="flex justify-center gap-2">
-            <input
-                id="chat-input"
-                class="border-solid border-2 border-slate-100 p-2 min-w-72"
-                value=""
-            />
-            <button
-                id="chat-button"
-                class="border-solid border-2 border-slate-100 p-2 hover:bg-slate-300"
-                >Enter</button
-            >
-        </div>
-    </section>
-</div>
+
+    </main>
+</Layout>
+
+<style is:global>
+    .chat-history-shadow {
+        box-shadow: -26px 0px 45px -18px rgba(255, 255, 255, 0.87) inset;
+        -webkit-box-shadow: -26px 0px 45px -18px rgba(255, 255, 255, 0.87) inset;
+        -moz-box-shadow: -26px 0px 45px -18px rgba(255, 255, 255, 0.87) inset;
+    }
+</style>
 
 <script is:inline>
     let chat = {};
