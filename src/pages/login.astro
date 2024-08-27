@@ -92,11 +92,12 @@ import Layout from "../layouts/Layout.astro";
             ?.addEventListener("submit", function (e) {
                 e.preventDefault();
 
-                const username = document.getElementById("username")?.value;
-                const password = document.getElementById("password")?.value;
+                const username = (document.getElementById("username") as HTMLInputElement)?.value;
+                const password = (document.getElementById("password") as HTMLInputElement)?.value;
 
                 fetch("http://localhost:8080/login", {
                     method: "POST",
+                    credentials: 'include',
                     headers: {
                         Authorization:
                             "Basic " + btoa(username + ":" + password),

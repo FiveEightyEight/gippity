@@ -61,6 +61,7 @@ const Chat: React.FC = () => {
     const fetchConversation = async (id: string) => {
         try {
             const response = await fetch(`http://localhost:8080/conversation/${id}`, {
+                credentials: 'include',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },

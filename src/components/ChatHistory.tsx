@@ -47,6 +47,7 @@ const ChatHistory: React.FC = () => {
     const fetchChatHistory = async () => {
         try {
             const response = await fetch('http://localhost:8080/chat-history', {
+                credentials: 'include',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
