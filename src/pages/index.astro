@@ -2,6 +2,14 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
+<style is:global>
+	.chat-history-shadow {
+		box-shadow: -26px 0px 45px -18px rgba(255, 255, 255, 0.87) inset;
+		-webkit-box-shadow: -26px 0px 45px -18px rgba(255, 255, 255, 0.87) inset;
+		-moz-box-shadow: -26px 0px 45px -18px rgba(255, 255, 255, 0.87) inset;
+	}
+</style>
+
 <Layout title="Gippity">
 	<div
 		id="loading-indicator"
