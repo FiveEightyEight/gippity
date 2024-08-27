@@ -86,7 +86,8 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
+        const { setAccessToken } = await import('../stores/token');
         document
             .getElementById("loginForm")
             ?.addEventListener("submit", function (e) {
@@ -106,9 +107,9 @@ import Layout from "../layouts/Layout.astro";
                 })
                     .then((response) => response.json())
                     .then((data) => {
-                        if (data.token) {
-                            alert("Login successful!");
-                            localStorage.setItem("token", data.token);
+                        // token is data.t
+                        if (data.t) {
+                            setAccessToken(data.t);
                             window.location.href = "/home";
                         } else {
                             alert(
