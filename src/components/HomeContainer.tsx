@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
+import { $selectedModel } from '../stores/chat';
 import { $accessToken, setAccessToken } from "../stores/token";
 import { apiFetch } from "../utils/api";
 const apiUrl = import.meta.env.PUBLIC_API_URL;
@@ -17,6 +18,7 @@ const Home: React.FC = () => {
     const [currModel, setCurrModel] = useState("");
     const [loading, setLoading] = useState(false);
     const token = useStore($accessToken);
+    const selectedModel = useStore($selectedModel);
 
 
     const USER = "user";
@@ -92,12 +94,12 @@ const Home: React.FC = () => {
     };
 
     return (
-        <main className="grid grid-cols-12 h-[100dvh] overflow-hidden">
-            <div className="col-span-3">
+        <main className="flex flex-row h-[100dvh] overflow-hidden">
+            <div className="w-1/5">
                 <ChatHistory />
             </div>
-            <div className="col-span-9 h-full">
-                <div className="h-full grid grid-rows-12">
+            <div className="h-full w-4/5">
+                <div className="h-full flex flex-col justify-between">
                     <div
                         className="row-span-1 grid grid-rows-2  w-full p-2 border-b-2 border-solid border-black bg-slate-700 shadow-lg"
                     >

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { chatId } from '../stores/chat';
 const apiUrl = import.meta.env.PUBLIC_API_URL;
+const apiVersion = import.meta.env.PUBLIC_API_VERSION;
 
 interface Message {
     chat_id: string;
@@ -12,44 +13,46 @@ interface Message {
     is_edited: boolean;
 }
 
+const mockMessages: Message[] = [
+    {
+        chat_id: '1',
+        user_id: 'user1',
+        role: 'user',
+        content: "Hello, how are you?",
+        created_at: '2023-04-20T10:00:00Z',
+        is_edited: false
+    },
+    {
+        chat_id: '1',
+        user_id: 'assistant',
+        role: 'assistant',
+        content: "Hello! I'm doing well, thank you for asking. How can I assist you today?",
+        created_at: '2023-04-20T10:01:00Z',
+        is_edited: false
+    },
+    {
+        chat_id: '1',
+        user_id: 'user1',
+        role: 'user',
+        content: "I have a question about React hooks.",
+        created_at: '2023-04-20T10:02:00Z',
+        is_edited: false
+    },
+    {
+        chat_id: '1',
+        user_id: 'assistant',
+        role: 'assistant',
+        content: "Certainly! I'd be happy to help you with any questions you have about React hooks. What specifically would you like to know?",
+        created_at: '2023-04-20T10:03:00Z',
+        is_edited: false
+    }
+]
+
 const Chat: React.FC = () => {
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            chat_id: '1',
-            user_id: 'user1',
-            role: 'user',
-            content: "Hello, how are you?",
-            created_at: '2023-04-20T10:00:00Z',
-            is_edited: false
-        },
-        {
-            chat_id: '1',
-            user_id: 'assistant',
-            role: 'assistant',
-            content: "Hello! I'm doing well, thank you for asking. How can I assist you today?",
-            created_at: '2023-04-20T10:01:00Z',
-            is_edited: false
-        },
-        {
-            chat_id: '1',
-            user_id: 'user1',
-            role: 'user',
-            content: "I have a question about React hooks.",
-            created_at: '2023-04-20T10:02:00Z',
-            is_edited: false
-        },
-        {
-            chat_id: '1',
-            user_id: 'assistant',
-            role: 'assistant',
-            content: "Certainly! I'd be happy to help you with any questions you have about React hooks. What specifically would you like to know?",
-            created_at: '2023-04-20T10:03:00Z',
-            is_edited: false
-        }
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const inputRef = useRef<HTMLInputElement>(null);
-    // const currentChatId = useStore(chatId || '1');
-    const currentChatId = '1';
+    const currentChatId = useStore(chatId);
+    // const currentChatId = '1';
 
     useEffect(() => {
         if (currentChatId) {
@@ -61,6 +64,7 @@ const Chat: React.FC = () => {
 
     const fetchConversation = async (id: string) => {
         try {
+            const url = new URL(`${apiUrl}${apiVersion}/conversation/${id}`)
             const response = await fetch(`${apiUrl}/conversation/${id}`, {
                 credentials: 'include',
                 headers: {
@@ -98,9 +102,9 @@ const Chat: React.FC = () => {
 
     return (
 
-        <div className="row-span-11 flex flex-col justify-between w-full">
+        <div className="flex flex-col justify-between w-full">
             <article className="flex-grow overflow-y-auto px-4 py-2">
-                {currentChatId ? (
+                {
                     messages.map((msg, index) => (
                         <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} mb-2`}>
                             <p className={`${msg.role === 'user'
@@ -112,8 +116,11 @@ const Chat: React.FC = () => {
                             </p>
                         </div>
                     ))
-                ) : (
-                    <p>Select or start a new chat to begin.</p>
+                }
+                {messages.length === 0 && (
+                    <div className="flex justify-center items-center h-full">
+                        <p className="text-gray-500">Ask me anything</p>    
+                    </div>
                 )}
             </article>
             <div className="p-4 border-t border-gray-200">
