@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useStore } from '@nanostores/react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
@@ -12,6 +12,12 @@ const ModelSelector = (props: { models: Model[] }) => {
     const [modelName, setModelName] = useState("");
     const selectedModel = useStore($selectedModel);
     
+    useEffect(() => {
+        if (!modelName && props.models.length > 0) {
+            setModelName(props.models[0].name);
+            setSelectedModel(props.models[0].version);
+        }
+    }, [props.models]);
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
