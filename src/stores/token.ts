@@ -31,6 +31,8 @@ export async function refreshToken(): Promise<boolean> {
             if (data.t) {
                 setAccessToken(data.t);
                 return true;
+            } else {
+                window.location.href = '/login';
             }
         }
         return false;
