@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { chatId } from '../stores/chat';
+import { apiFetch } from '../utils/api';
 const apiUrl = import.meta.env.PUBLIC_API_URL;
 const apiVersion = import.meta.env.PUBLIC_API_VERSION;
 
@@ -65,13 +66,8 @@ const Chat: React.FC = () => {
     const fetchConversation = async (id: string) => {
         try {
             const url = new URL(`${apiUrl}${apiVersion}/conversation/${id}`)
-            const response = await fetch(`${apiUrl}/conversation/${id}`, {
-                credentials: 'include',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            if (!response.ok) {
+            const response = await apiFetch(url.href);
+            if (!response || response.status !== 200) {
                 throw new Error('Failed to fetch conversation');
             }
             const data = await response.json();
@@ -82,20 +78,41 @@ const Chat: React.FC = () => {
         }
     };
 
+    const sendMessage = async (message: Message) => {
+        try {
+            const url = new URL(`${apiUrl}${apiVersion}/conversation`)
+            const response = await apiFetch(url.href, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(message)
+            })
+            if (!response || response.status !== 200) {
+                throw new Error('Failed to send message');
+            }
+            const data = await response.json();
+            setMessages(prevMessages => [...prevMessages, data]);
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+    }
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (inputRef.current && inputRef.current.value.trim() !== '') {
+            const sanitizedMessage = inputRef.current.value.trim();
             const newMessage: Message = {
-                chat_id: currentChatId,
-                user_id: 'user1',
+                chat_id: currentChatId || '',
+                user_id: '',
                 role: 'user',
-                content: inputRef.current.value,
+                content: sanitizedMessage,
                 created_at: new Date().toISOString(),
                 is_edited: false
             };
             setMessages(prevMessages => [...prevMessages, newMessage]);
             inputRef.current.value = '';
-            // sendMessage(newMessage);
+            sendMessage(newMessage);
         }
     };
 
@@ -118,8 +135,8 @@ const Chat: React.FC = () => {
                     ))
                 }
                 {messages.length === 0 && (
-                    <div className="flex justify-center items-center h-full">
-                        <p className="text-gray-500">Ask me anything</p>    
+                    <div className="flex justify-center items-center h-full animate-bounce">
+                        <p className="text-gray-500">Ask me anything</p>
                     </div>
                 )}
             </article>
