@@ -1,6 +1,10 @@
 import { getAccessToken, refreshToken } from "../stores/token";
 
 export async function apiFetch(url: string, options: RequestInit = {}): Promise<Response | null> {
+    const token = getAccessToken();
+    if (!token) {
+        await refreshToken();
+    }
     const response = await fetch(url, {
         ...options,
         headers: {
