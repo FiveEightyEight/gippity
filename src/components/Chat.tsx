@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
-import { chatId } from '../stores/chat';
+import { chatId, $selectedModel } from '../stores/chat';
 import { apiFetch } from '../utils/api';
 const apiUrl = import.meta.env.PUBLIC_API_URL;
 const apiVersion = import.meta.env.PUBLIC_API_VERSION;
@@ -12,6 +12,7 @@ interface Message {
     content: string;
     created_at: string;
     is_edited: boolean;
+    ai_model_version?: string;
 }
 
 const mockMessages: Message[] = [
@@ -53,6 +54,7 @@ const Chat: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const inputRef = useRef<HTMLInputElement>(null);
     const currentChatId = useStore(chatId);
+    const selectedModel = useStore($selectedModel);
     // const currentChatId = '1';
 
     useEffect(() => {
@@ -108,7 +110,8 @@ const Chat: React.FC = () => {
                 role: 'user',
                 content: sanitizedMessage,
                 created_at: new Date().toISOString(),
-                is_edited: false
+                is_edited: false,
+                ai_model_version: selectedModel
             };
             setMessages(prevMessages => [...prevMessages, newMessage]);
             inputRef.current.value = '';
