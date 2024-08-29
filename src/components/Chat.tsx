@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { chatId, $selectedModel } from '../stores/chat';
-import { apiFetch } from '../utils/api';
+import { apiFetch, apiStreamFetch } from '../utils/api';
 const apiUrl = import.meta.env.PUBLIC_API_URL;
 const apiVersion = import.meta.env.PUBLIC_API_VERSION;
 
@@ -83,18 +83,39 @@ const Chat: React.FC = () => {
     const sendMessage = async (message: Message) => {
         try {
             const url = new URL(`${apiUrl}${apiVersion}/conversation`)
-            const response = await apiFetch(url.href, {
+            const stream = await apiStreamFetch(url.href, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(message)
             })
-            if (!response || response.status !== 200) {
+            if (!stream) {
                 throw new Error('Failed to send message');
             }
-            const data = await response.json();
-            setMessages(prevMessages => [...prevMessages, data]);
+            const reader = stream.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let done = false;
+            let fullContent = '';
+            while (!done) {
+                const { value, done: doneReading } = await reader.read();
+                done = doneReading;
+                const chunkValue = decoder.decode(value, { stream: true });
+                fullContent += chunkValue;
+                setMessages(prevMessages => {
+                    const updatedMessages = [...prevMessages];
+                    const lastMessage = updatedMessages[updatedMessages.length - 1];
+                    lastMessage.content = fullContent;
+                    return updatedMessages;
+                });
+            }
+            // Set the final state with the complete content
+            setMessages(prevMessages => {
+                const updatedMessages = [...prevMessages];
+                const lastMessage = updatedMessages[updatedMessages.length - 1];
+                lastMessage.content = fullContent;
+                return updatedMessages;
+            });
         } catch (error) {
             console.error('Error sending message:', error);
         }
@@ -113,7 +134,15 @@ const Chat: React.FC = () => {
                 is_edited: false,
                 ai_model_version: selectedModel
             };
-            setMessages(prevMessages => [...prevMessages, newMessage]);
+            setMessages(prevMessages => [...prevMessages, newMessage, {
+                chat_id: currentChatId || '',
+                user_id: '',
+                role: 'assistant',
+                content: '',
+                created_at: new Date().toISOString(),
+                is_edited: false,
+                ai_model_version: selectedModel
+            }]);
             inputRef.current.value = '';
             sendMessage(newMessage);
         }
