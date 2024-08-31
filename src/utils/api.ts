@@ -32,7 +32,7 @@ export async function apiFetch(url: string, options: RequestInit = {}): Promise<
     return response;
 }
 
-export async function apiStreamFetch(url: string, options: RequestInit = {}): Promise<ReadableStream | null> {
+export async function apiStreamFetch(url: string, options: RequestInit = {}): Promise<Response | null> {
     const token = getAccessToken();
     if (!token) {
         await refreshToken();
@@ -56,7 +56,7 @@ export async function apiStreamFetch(url: string, options: RequestInit = {}): Pr
                     Authorization: `Bearer ${getAccessToken()}`,
                 },
             });
-            return retryResponse.body;
+            return retryResponse;
         } else {
             return null;
         }
@@ -66,6 +66,6 @@ export async function apiStreamFetch(url: string, options: RequestInit = {}): Pr
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return response.body;
+    return response;
 }
 
