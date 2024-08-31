@@ -49,6 +49,12 @@ const ChatHistory: React.FC = () => {
         fetchChatHistory();
     }, []);
 
+    useEffect(() => {
+        if (currentChatId && !chats?.find(chat => chat.id === currentChatId)) {
+            fetchChatHistory();
+        }
+    }, [currentChatId]);
+
     const fetchChatHistory = async () => {
         try {
             const url = new URL(`${apiUrl}${apiVersion}/chat-history`)
