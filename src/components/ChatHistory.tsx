@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
-import { chatId } from '../stores/chat';
+import { chatId, setChatId } from '../stores/chat';
 import { apiFetch } from "../utils/api";
 const apiUrl = import.meta.env.PUBLIC_API_URL;
 const apiVersion = import.meta.env.PUBLIC_API_VERSION;
@@ -69,6 +69,18 @@ const ChatHistory: React.FC = () => {
 
     return (
         <div className="max-w-1/3 overflow-y-auto border-r-2 border-solid border-black min-h-full shadow-inner shadow-slate-300">
+            <div className="w-full p-4 flex justify-between items-center border-b border-gray-200">
+                <h2 className="text-xl font-semibold">Chat History</h2>
+                <button
+                    onClick={() => setChatId('')}
+                    className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                    aria-label="New Chat"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                </button>
+            </div>
             <ul className="space-y-2">
                 {chats.map((chat) => (
                     <li
