@@ -68,9 +68,9 @@ const ChatHistory: React.FC = () => {
     };
 
     return (
-        <div className="max-w-1/3 overflow-y-auto border-r-2 border-solid border-black min-h-full shadow-inner shadow-slate-300">
+        <div className="max-w-1/3 border-r-2 border-solid border-black min-h-full shadow-inner shadow-slate-300 flex flex-col">
             <div className="w-full p-4 flex justify-between items-center border-b border-gray-200">
-                <h2 className="text-xl font-semibold">Chat History</h2>
+                <h2 className="text-sm md:text-xl font-extrabold md:font-semibold">Chat History</h2>
                 <button
                     onClick={() => setChatId('')}
                     className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
@@ -81,7 +81,7 @@ const ChatHistory: React.FC = () => {
                     </svg>
                 </button>
             </div>
-            <ul className="space-y-2">
+            <ul className="space-y-2 overflow-scroll flex-grow">
                 {chats.map((chat) => (
                     <li
                         key={chat.id}
