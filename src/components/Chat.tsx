@@ -60,8 +60,6 @@ const Chat: React.FC = () => {
     useEffect(() => {
         if (currentChatId) {
             fetchConversation(currentChatId);
-        } else {
-            setMessages([]);
         }
     }, [currentChatId]);
 
