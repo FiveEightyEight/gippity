@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
-import { chatId, $selectedModel } from '../stores/chat';
+import { chatId, setChatId, $selectedModel } from '../stores/chat';
 import { apiFetch, apiStreamFetch } from '../utils/api';
 const apiUrl = import.meta.env.PUBLIC_API_URL;
 const apiVersion = import.meta.env.PUBLIC_API_VERSION;
@@ -80,19 +80,32 @@ const Chat: React.FC = () => {
         }
     };
 
+    const getChatIdFromHeaders = (headers: Headers) => {
+        try {
+            const chatId = headers.get('x-chat-id');
+            if (chatId && chatId !== currentChatId) {
+                setChatId(chatId);
+            }
+        } catch (error) {
+            console.error('Error getting chat ID from headers:', error);
+        }
+    }
+
     const sendMessage = async (message: Message) => {
         try {
             const url = new URL(`${apiUrl}${apiVersion}/conversation`)
-            const stream = await apiStreamFetch(url.href, {
+            const response = await apiStreamFetch(url.href, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(message)
             })
-            if (!stream) {
+            if (!response) {
                 throw new Error('Failed to send message');
             }
+            getChatIdFromHeaders(response.headers);
+            const stream = response.body as ReadableStream;
             const reader = stream.getReader();
             const decoder = new TextDecoder('utf-8');
             let done = false;
