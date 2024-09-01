@@ -97,8 +97,7 @@ const ChatHistory: React.FC = () => {
     return (
         <>
             <div className="h-full max-w-1/3 border-r-2 border-solid border-black min-h-full shadow-inner shadow-slate-300 flex flex-col overflow-hidden">
-                <div className="w-full p-4 flex justify-between items-center border-b border-gray-200">
-                    <h2 className="text-sm md:text-xl font-extrabold md:font-semibold">Chat History</h2>
+                <div className="w-full p-4 flex justify-end">
                     <button
                         onClick={() => setChatId('')}
                         className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
