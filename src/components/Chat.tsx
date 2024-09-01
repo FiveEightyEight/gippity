@@ -104,7 +104,6 @@ const Chat: React.FC = () => {
             if (!response) {
                 throw new Error('Failed to send message');
             }
-            getChatIdFromHeaders(response.headers);
             const stream = response.body as ReadableStream;
             const reader = stream.getReader();
             const decoder = new TextDecoder('utf-8');
@@ -129,6 +128,8 @@ const Chat: React.FC = () => {
                 lastMessage.content = fullContent;
                 return updatedMessages;
             });
+            // Update the chat ID after processing the stream
+            getChatIdFromHeaders(response.headers);
         } catch (error) {
             console.error('Error sending message:', error);
         }
