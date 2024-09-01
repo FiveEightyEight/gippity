@@ -15,29 +15,33 @@ export function getAccessToken(): string | null {
     return $accessToken.get();
 }
 
+let refreshTokenPromise = null;
 export async function refreshToken(): Promise<boolean> {
-    try {
-        const response = await fetch(`${apiUrl}/refresh`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            // token expected as data.t
-            if (data.t) {
-                setAccessToken(data.t);
-                return true;
-            } else {
-                window.location.href = '/login';
+    if (!refreshTokenPromise) {
+        refreshTokenPromise = (async () => {
+            try {
+                const response = await fetch(`${apiUrl}/refresh`, {
+                    method: 'POST',
+                    credentials: 'include',
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to refresh token');
+                }
+                const data = await response.json();
+                if (data.t) {
+                    setAccessToken(data.t);
+                    return true;
+                } else {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Error refreshing token:', error);
+                throw error;
+            } finally {
+                refreshTokenPromise = null; // Reset the promise after it's resolved
             }
-        }
-        return false;
-    } catch (error) {
-        console.error('Error refreshing token:', error);
-        return false;
+        })();
     }
+
+    return refreshTokenPromise;
 }
