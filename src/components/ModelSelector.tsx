@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 
-import { $selectedModel, setSelectedModel } from '../stores/chat';
+import { $messages, $selectedModel, setSelectedModel } from '../stores/chat';
 import type { Model } from './types';
 
 
@@ -11,7 +11,9 @@ const ModelSelector = (props: { models: Model[] }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [modelName, setModelName] = useState("");
     const selectedModel = useStore($selectedModel);
-    
+    const messages = useStore($messages);
+    const hasMessages = messages && messages.length > 0;
+
     useEffect(() => {
         if (!modelName && props.models.length > 0) {
             setModelName(props.models[0].name);
@@ -22,6 +24,21 @@ const ModelSelector = (props: { models: Model[] }) => {
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
+
+    if (hasMessages) {
+        return (
+            <Menu as="div" className="relative inline-block text-left">
+                <div>
+                    <MenuButton
+                        className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                        disabled
+                    >
+                        {selectedModel && modelName || "Select Model"}
+                    </MenuButton>
+                </div>
+            </Menu>
+        )
+    }
 
     return (
         <Menu as="div" className="relative inline-block text-left">
