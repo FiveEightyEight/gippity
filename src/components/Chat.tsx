@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useStore } from '@nanostores/react';
 import { chatId, setChatId, $selectedModel, $messages, setMessages, addMessage, updateLastMessage } from '../stores/chat';
 import { apiFetch, apiStreamFetch } from '../utils/api';
@@ -46,6 +47,21 @@ const Chat: React.FC = () => {
     const currentChatId = useStore(chatId);
     const selectedModel = useStore($selectedModel);
     const messages: Message[] = useStore($messages);
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const paramsProxy = new Proxy(params, {
+            get: (searchParams, prop: string) => searchParams.get(prop),
+        });
+        const chatId = paramsProxy && paramsProxy['chat'];
+        if (chatId) {
+            setChatId(chatId);
+        } else {
+            setChatId('');
+        }
+    }, [location.search])
 
     useEffect(() => {
         if (currentChatId) {
@@ -74,7 +90,10 @@ const Chat: React.FC = () => {
         try {
             const chatId = headers.get('x-chat-id');
             if (chatId && chatId !== currentChatId) {
-                setChatId(chatId);
+                // window.history.pushState({}, '', `/home?chat=${chatId}`);
+                // using history.pushState would be better to not reload the page.
+                // but reloading calls the chat-history endpoint
+                navigate(`/home?chat=${chatId}`);
             }
         } catch (error) {
             console.error('Error getting chat ID from headers:', error);

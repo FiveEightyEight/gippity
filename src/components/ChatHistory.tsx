@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from "react-router-dom";
 import { useStore } from '@nanostores/react';
 import { chatId, setChatId } from '../stores/chat';
 import { apiFetch } from "../utils/api";
@@ -48,13 +49,14 @@ const ChatHistory: React.FC = () => {
     const [chats, setChats] = useState<Chat[]>([]);
     const [modalContent, setModalContent] = useState<ModalProps | null>(null);
     const currentChatId = useStore(chatId);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchChatHistory();
     }, []);
 
     useEffect(() => {
-        if (currentChatId && !chats?.find(chat => chat.id === currentChatId)) {
+        if (currentChatId && chats && chats.length && !chats?.find(chat => chat.id === currentChatId)) {
             fetchChatHistory();
         }
     }, [currentChatId]);
@@ -75,10 +77,6 @@ const ChatHistory: React.FC = () => {
         }
     };
 
-    const handleChatSelect = (selectedChatId: string) => {
-        chatId.set(selectedChatId);
-    };
-
     const deleteChat = async (chatId: string) => {
         try {
             const url = new URL(`${apiUrl}${apiVersion}/chat/${chatId}`)
@@ -88,7 +86,7 @@ const ChatHistory: React.FC = () => {
             }
             setChats(chats.filter(chat => chat.id !== chatId));
             setModalContent(null);
-            setChatId('');
+            navigate('/home');
         } catch (error) {
             console.error('Error deleting chat:', error);
         }
@@ -98,28 +96,30 @@ const ChatHistory: React.FC = () => {
         <>
             <div className="h-full max-w-1/3 border-r-2 border-solid border-black min-h-full shadow-inner shadow-slate-300 flex flex-col overflow-hidden">
                 <div className="w-full p-4 flex justify-end">
-                    <button
-                        onClick={() => setChatId('')}
+                    <Link
+                        to="/home"
                         className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
                         aria-label="New Chat"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
-                    </button>
+                    </Link>
                 </div>
-                <ul className="space-y-2 overflow-scroll flex-grow p-2">
+                <ul className="space-y-2 overflow-scroll flex-grow py-2">
                     {chats.map((chat) => (
                         <li
                             key={chat.id}
-                            onClick={() => handleChatSelect(chat.id)}
                             className={['cursor-pointer', 'p-2', 'rounded-sm', 'flex', 'justify-between', 'items-center',
                                 currentChatId === chat.id ? 'bg-gray-200' : 'hover:bg-gray-100'
                             ].join(' ')}
                         >
-                            <div className="truncate overflow-hidden">
+                            <Link
+                                to={`/home?chat=${chat.id}`}
+                                className="truncate overflow-hidden"
+                            >
                                 <span className="text-sm font-medium">{chat.title}</span>
-                            </div>
+                            </Link>
                             {currentChatId === chat.id && (
                                 <button
                                     onClick={(e) => setModalContent({
