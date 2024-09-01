@@ -67,7 +67,9 @@ const ChatHistory: React.FC = () => {
                 throw new Error('Failed to fetch chat history');
             }
             const data = await response.json();
-            setChats(data);
+            if (data && data.length > 0) {
+                setChats(data);
+            }
         } catch (error) {
             console.error('Error fetching chat history:', error);
         }
@@ -76,6 +78,21 @@ const ChatHistory: React.FC = () => {
     const handleChatSelect = (selectedChatId: string) => {
         chatId.set(selectedChatId);
     };
+
+    const deleteChat = async (chatId: string) => {
+        try {
+            const url = new URL(`${apiUrl}${apiVersion}/chat/${chatId}`)
+            const response = await apiFetch(url.href, { method: 'DELETE' })
+            if (!response || response.status !== 200) {
+                throw new Error('Failed to delete chat');
+            }
+            setChats(chats.filter(chat => chat.id !== chatId));
+            setModalContent(null);
+            setChatId('');
+        } catch (error) {
+            console.error('Error deleting chat:', error);
+        }
+    }
 
     return (
         <>
@@ -110,12 +127,12 @@ const ChatHistory: React.FC = () => {
                                         open: true,
                                         setOpen: () => setModalContent(null),
                                         onCancel: () => setModalContent(null),
+                                        onConfirm: () => deleteChat(chat.id),
                                         title: 'Delete Chat',
                                         message: 'Are you sure you want to delete this chat?',
+                                        confirmText: 'Delete',
+                                        cancelText: 'Cancel',
                                         variant: 'delete',
-                                        onConfirm: () => {
-                                            console.log('Delete chat:', chat.id);
-                                        }
                                     })}
                                     className="ml-2 p-1 text-red-600 hover:bg-red-100 rounded"
                                     aria-label="Delete chat"
