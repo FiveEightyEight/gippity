@@ -57,7 +57,7 @@ const Chat: React.FC = () => {
 
     const fetchConversation = async (id: string) => {
         try {
-            const url = new URL(`${apiUrl}${apiVersion}/conversation/${id}`)
+            const url = new URL(`${apiUrl}${apiVersion}/chat?id=${id}`)
             const response = await apiFetch(url.href);
             if (!response || response.status !== 200) {
                 throw new Error('Failed to fetch conversation');
