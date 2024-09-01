@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import {
+    useLocation,
+    createBrowserRouter,
+    RouterProvider,
+  } from "react-router-dom";
 import { useStore } from '@nanostores/react';
 import { $selectedModel } from '../stores/chat';
 import { $accessToken, setAccessToken } from "../stores/token";
@@ -19,7 +24,8 @@ const Home: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const token = useStore($accessToken);
     const selectedModel = useStore($selectedModel);
-
+    const location = useLocation();
+    console.log("homecontainer location", location);
 
     const USER = "user";
     const SYSTEM = "system";
@@ -117,4 +123,15 @@ const Home: React.FC = () => {
     );
 };
 
-export default Home;
+const router = createBrowserRouter([
+    {
+        path: "/home",
+        element: <Home />,
+    },
+]);
+
+function HomeContainer() {
+    return <RouterProvider router={router} />;
+}
+
+export default HomeContainer;
