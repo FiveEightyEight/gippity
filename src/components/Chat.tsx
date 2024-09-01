@@ -1,19 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
-import { chatId, setChatId, $selectedModel } from '../stores/chat';
+import { chatId, setChatId, $selectedModel, $messages, setMessages, addMessage, updateLastMessage } from '../stores/chat';
 import { apiFetch, apiStreamFetch } from '../utils/api';
+import type { Message } from './types';
 const apiUrl = import.meta.env.PUBLIC_API_URL;
 const apiVersion = import.meta.env.PUBLIC_API_VERSION;
-
-interface Message {
-    chat_id: string;
-    user_id: string;
-    role: string;
-    content: string;
-    created_at: string;
-    is_edited: boolean;
-    ai_model_version?: string;
-}
 
 const mockMessages: Message[] = [
     {
@@ -51,11 +42,10 @@ const mockMessages: Message[] = [
 ]
 
 const Chat: React.FC = () => {
-    const [messages, setMessages] = useState<Message[]>([]);
     const inputRef = useRef<HTMLInputElement>(null);
     const currentChatId = useStore(chatId);
     const selectedModel = useStore($selectedModel);
-    // const currentChatId = '1';
+    const messages: Message[] = useStore($messages);
 
     useEffect(() => {
         if (currentChatId) {
@@ -114,20 +104,10 @@ const Chat: React.FC = () => {
                 done = doneReading;
                 const chunkValue = decoder.decode(value, { stream: true });
                 fullContent += chunkValue;
-                setMessages(prevMessages => {
-                    const updatedMessages = [...prevMessages];
-                    const lastMessage = updatedMessages[updatedMessages.length - 1];
-                    lastMessage.content = fullContent;
-                    return updatedMessages;
-                });
+                updateLastMessage(fullContent);
             }
             // Set the final state with the complete content
-            setMessages(prevMessages => {
-                const updatedMessages = [...prevMessages];
-                const lastMessage = updatedMessages[updatedMessages.length - 1];
-                lastMessage.content = fullContent;
-                return updatedMessages;
-            });
+            updateLastMessage(fullContent);
             // Update the chat ID after processing the stream
             getChatIdFromHeaders(response.headers);
         } catch (error) {
@@ -148,7 +128,7 @@ const Chat: React.FC = () => {
                 is_edited: false,
                 ai_model_version: selectedModel
             };
-            setMessages(prevMessages => [...prevMessages, newMessage, {
+            addMessage(newMessage, {
                 chat_id: currentChatId || '',
                 user_id: '',
                 role: 'assistant',
@@ -156,7 +136,7 @@ const Chat: React.FC = () => {
                 created_at: new Date().toISOString(),
                 is_edited: false,
                 ai_model_version: selectedModel
-            }]);
+            });
             inputRef.current.value = '';
             sendMessage(newMessage);
         }
