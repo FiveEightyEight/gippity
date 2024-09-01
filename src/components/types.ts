@@ -19,3 +19,13 @@ export interface ModalProps {
 }
 
 export type ModalVariant = 'neutral' | 'delete' | 'success';
+
+export type Message = {
+    chat_id: string;
+    user_id: string;
+    role: string;
+    content: string;
+    created_at: string;
+    is_edited: boolean;
+    ai_model_version?: string;
+}
