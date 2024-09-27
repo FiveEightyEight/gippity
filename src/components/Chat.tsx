@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useStore } from '@nanostores/react';
+import ChatMessage from './ChatMessage';
+import ModelSelector from './ModelSelector';
 import { chatId, setChatId, $selectedModel, $messages, setMessages, addMessage, updateLastMessage } from '../stores/chat';
 import { apiFetch, apiStreamFetch } from '../utils/api';
-import type { Message } from './types';
+import type { Message, Model } from './types';
 const apiUrl = import.meta.env.PUBLIC_API_URL;
 const apiVersion = import.meta.env.PUBLIC_API_VERSION;
 
@@ -42,7 +44,11 @@ const mockMessages: Message[] = [
     }
 ]
 
-const Chat: React.FC = () => {
+type ChatProps = {
+    models: Model[];
+}
+
+const Chat: React.FC<ChatProps> = ({ models }) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const currentChatId = useStore(chatId);
     const selectedModel = useStore($selectedModel);
@@ -161,31 +167,42 @@ const Chat: React.FC = () => {
         }
     };
 
-
+    // <div className="h-full flex flex-col justify-between">
     return (
 
-        <div className="flex flex-col justify-between w-full">
-            <article className="flex-grow overflow-y-auto px-4 py-2">
-                {
-                    messages.map((msg, index) => (
-                        <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} mb-2`}>
-                            <p className={`${msg.role === 'user'
-                                ? 'bg-slate-200 border-1 border-solid border-slate-300'
-                                : 'bg-green-200 border-1 border-solid border-green-300'
-                                } rounded-full py-2 px-4 max-w-[70%]`}
-                            >
-                                {msg.content}
-                            </p>
-                        </div>
-                    ))
-                }
+
+
+        <div className="flex flex-col justify-between w-full h-screen">
+            {/* header */}
+            <div
+                className="row-span-1 grid grid-rows-2  w-full p-2 border-b-2 border-solid border-black bg-slate-700 shadow-lg"
+            >
+                <div className="flex justify-center">
+                    <h1 className="text-2xl font-bold text-cyan-200">Gippity</h1>
+                </div>
+                <div className="flex justify-center">
+                    <ModelSelector models={models} />
+                </div>
+            </div>
+
+            {/* chat */}
+            <article className="flex-grow overflow-y-auto">
+                <div className=" px-4 py-2 md:max-w-3xl md:mx-auto">
+                    {
+                        messages.map((msg, index) => (
+                            <ChatMessage key={index} message={msg} />
+                        ))
+                    }
+                </div>
+
                 {messages.length === 0 && (
                     <div className="flex justify-center items-center h-full animate-bounce">
                         <p className="text-gray-500">Ask me anything</p>
                     </div>
                 )}
             </article>
-            <div className="p-4 border-t border-gray-200">
+            {/* bottom input */}
+            <div className="p-4 border-t border-gray-200 bg-white">
                 <form onSubmit={handleSubmit} className="flex items-center">
                     <input
                         type="text"
@@ -203,6 +220,7 @@ const Chat: React.FC = () => {
                     </button>
                 </form>
             </div>
+
         </div>
     );
 };
