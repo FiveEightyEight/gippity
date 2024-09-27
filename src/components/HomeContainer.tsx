@@ -3,7 +3,7 @@ import {
     useLocation,
     createBrowserRouter,
     RouterProvider,
-  } from "react-router-dom";
+} from "react-router-dom";
 import { useStore } from '@nanostores/react';
 import { $selectedModel } from '../stores/chat';
 import { $accessToken, setAccessToken } from "../stores/token";
@@ -105,19 +105,7 @@ const Home: React.FC = () => {
                 <ChatHistory />
             </div>
             <div className="h-full w-4/5">
-                <div className="h-full flex flex-col justify-between">
-                    <div
-                        className="row-span-1 grid grid-rows-2  w-full p-2 border-b-2 border-solid border-black bg-slate-700 shadow-lg"
-                    >
-                        <div className="flex justify-center">
-                            <h1 className="text-2xl font-bold text-cyan-200">Gippity</h1>
-                        </div>
-                        <div className="flex justify-center">
-                            <ModelSelector models={models} />
-                        </div>
-                    </div>
-                    <Chat />
-                </div>
+                <Chat models={models} />
             </div>
         </main>
     );
